@@ -30,5 +30,10 @@ This example demonstrates spoofind through two ways -- Stealing cookies programm
 ## For you to answer
 
 1. Briefly explain the spoofing vulnerability in **insecure.ts**.
+
+TODO: 
+
+
+
 2. Briefly explain different ways in which vulnerability can be exploited.
 3. Briefly explain why **secure.ts** does not have the spoofing vulnerability in **insecure.ts**.

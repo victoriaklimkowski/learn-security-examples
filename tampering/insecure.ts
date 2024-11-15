@@ -29,6 +29,7 @@ app.use(
 );
 
 app.post("/sensitive", (req: Request, res: Response) => {
+  // Tamerping vulnarability: Input data here is not sanitized
   if (req.session.user === 'Admin') {
     req.session.sensitive = 'supersecret';
     res.send({ message: 'Operation successful' });
@@ -39,9 +40,11 @@ app.post("/sensitive", (req: Request, res: Response) => {
 
 app.get("/", (req: Request, res: Response) => {
   let name = "Guest";
-
+  // Safe because we are reading from the session
+  // Which we are assuming in this case it is ok
   if (req.session.user) name = req.session.user;
 
+  // Name here is executed as code and was not sanitized!!!
   res.send(`
   <h1>Welcome, ${name}</h1>
   <form action="/register" method="POST">
@@ -55,6 +58,8 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.post("/register", (req: Request, res: Response) => {
+  // Tampering vulnarabilty: Input data here is not sanitized
+  // and is read from req.body which is direct from user
   req.session.user = req.body.name.trim();
   res.send(`<p>Thank you</p> <a href="/">Back home</a>`);
 });

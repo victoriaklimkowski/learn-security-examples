@@ -12,6 +12,9 @@ const app = express();
  * **/
 declare module 'express-session' {
   interface SessionData {
+    // Specific to our server, not to sessions
+    // we want to augment the session with these properties
+    // Because this is ts we have to define these properties now/early
     user?: string;
     sensitive?: string;
   }
@@ -21,6 +24,15 @@ declare module 'express-session' {
 app.use(express.urlencoded({ extended: false }));
 
 // middleware to create a session
+// middleware is the chain of command pattern
+// it intercepts the request and response objects
+// and sets the session with some cookie
+// configures the session id with some parameters
+// httpOnly: False means this could be programmatically manipulated
+// THus it's the way you do it that's insecure. 
+// THe other issue is that the secret is hardcoded
+// and instead should be read as an environment variable
+// or from a secure location
 app.use(
   session({
     secret: "SOMESECRET",
@@ -36,6 +48,9 @@ app.use(
  * otherwise, it will return an error message with "Unauthorized Access"
  */
 app.post("/sensitive", (req: Request, res: Response) => {
+  // THe session set by the middleware is checked here
+  // Because of the way session is set this could also be
+  // accessed by spoofers
   if (req.session.user === 'Admin') {
     req.session.sensitive = 'supersecret';
     res.send({ message: 'Operation successful' });
@@ -49,6 +64,8 @@ app.post("/sensitive", (req: Request, res: Response) => {
  * to set the user session if session is not set
  * it also sends a form to the user to input their name
  */
+// The middleware intercepts this request and
+// generates the session id first
 app.get("/", (req: Request, res: Response) => {
   let name = "Guest";
 

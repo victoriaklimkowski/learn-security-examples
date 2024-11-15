@@ -70,6 +70,7 @@ app.listen(8000, () => {
   console.log("Server is running on port 8000");
 });
 
+// XSS = Cross Site Scripting attack
 /**
  * sanitize input to prevent XSS attacks
  * @param input 
@@ -77,6 +78,10 @@ app.listen(8000, () => {
  */
 function escapeHTML(input: string): string {
   return input
+  // converting all script elements into harmless strings
+  // could also restrict input to not allow special characters
+  // to more simply prevent XSS attacks
+  // npm package has a sanitizer
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")

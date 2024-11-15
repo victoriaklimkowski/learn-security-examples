@@ -2,6 +2,8 @@ import express, { Request, Response } from "express";
 import session from "express-session";
 
 const app = express();
+// NEW: where the secret is coming from - only known by
+// the person who starts the server
 const secret: string = process.argv[2];
 
 /** 

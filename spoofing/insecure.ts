@@ -6,6 +6,7 @@ const app = express();
 /** 
  * Extend the SessionData interface 
  * to include custom session properties.
+ * 
  * This is an example of module augmentation in TypeScript 
  * to extend the express-session module with custom properties 
  * Read more at https://www.typescriptlang.org/docs/handbook/declaration-merging.html#module-augmentation 
@@ -27,6 +28,7 @@ app.use(express.urlencoded({ extended: false }));
 // middleware is the chain of command pattern
 // it intercepts the request and response objects
 // and sets the session with some cookie
+
 // configures the session id with some parameters
 // httpOnly: False means this could be programmatically manipulated
 // THus it's the way you do it that's insecure. 

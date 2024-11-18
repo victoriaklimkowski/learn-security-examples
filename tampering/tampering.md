@@ -26,7 +26,12 @@ Answer the following:
 
 1. Briefly explain the potential vulnerabilities in **insecure.ts**
 
-TODO: 
+The tampering vulnerability in insecure.ts is due to reading in input data from the user without sanitizing it. In the app.post("/register"...) block we read in req.body.name as a String and whatever that string may contain. If executable code is passed in as part of this string, it could be executed on the system and expose an assortment of things. 
 
 2. Briefly explain how a malicious attacker can exploit them.
+
+A malicious attacker could exploit this in a number of ways, most dangerously by passing in executable code. This executable code could change the user type, insert a redirection link, expose additional page data, etc. 
+
 3. Briefly explain why **secure.ts** does not have the same vulnerabilties?
+
+In secure.ts the code uses a function we define locally called escapeHTML to replace any executable characters like "<>" with escaped characters, rendering any executable code as a harmless string. There are numerous other ways of doing this like using the npm package or restricting user input of characters using a check (e.g. no special characters in username allowed). The important point here is that no matter how you sanitize your input, you must ensure that all input from the user is sanitized. 

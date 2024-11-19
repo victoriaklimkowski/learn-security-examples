@@ -26,7 +26,7 @@ Answer the following:
 
 1. Briefly explain the potential vulnerabilities in **insecure.ts**
 
-The tampering vulnerability in insecure.ts is due to reading in input data from the user without sanitizing it. In the app.post("/register"...) block we read in req.body.name as a String and whatever that string may contain. If executable code is passed in as part of this string, it could be executed on the system and expose an assortment of things. 
+The tampering vulnerability in insecure.ts is due to reading in input data from the user without sanitizing it. In the app.post("/register"...) block we read in req.body.name as a String and whatever that string may contain. If executable code is passed in as part of this string, it could be executed on the system and expose an assortment of things, including leading to an injection attack. 
 
 2. Briefly explain how a malicious attacker can exploit them.
 

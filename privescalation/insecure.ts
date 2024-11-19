@@ -26,6 +26,11 @@ app.use(bodyParser.json());
 
 // Route to update user role (VULNERABLE TO PRIVILEGE ESCALATION)
 app.post('/update-role', (req: Request, res: Response) => {
+  // -- Not sanitizing data - could have other stuff passed in
+  // from an untrusted user source which could be attacker controlled
+  // so if we know the userId of an admin, someone could take advantage of this
+  // This is an example of lack of authorization. 
+  // We should instead read the user id from an authorized source, not the user
   const { userId, newRole } = req.body;
 
   // Simulated authentication (insecure)

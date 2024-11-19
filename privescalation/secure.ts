@@ -34,7 +34,14 @@ app.use(bodyParser.json());
 
 // Session middleware
 app.use(session({
+  // -- not secure because it is hardcoded
+  // secrets are created by appending a random secret to the end of the cookie string.
+  // so this should not be exposed. 
+  // see spoofing examples for how to do this better. 
+  // also Secure should be set to True as well to make it safe both in transit and storage
+  // but that doesn't work with localhost so only for production. 
   secret: 'your_secret_key',
+  // -- httpOnly: prevents cookie spoofing
   cookie: { httpOnly: true, sameSite: 'strict' }, // SameSite should be a string
   resave: false,
   saveUninitialized: true,
@@ -45,6 +52,11 @@ app.post('/update-role', (req: Request, res: Response) => {
   const { userId, newRole } = req.body;
 
   // Check if the user is logged in (authenticated)
+  // Reading the userId from session (trusted), instead of the user.body
+  // which is secure.
+  // This is assuming sessions is secure and not vulnerable to spoofing.
+  // see spoofing.ts for more info on that. 
+  // IF there is no session, then user is not authorized either, or not logged in to an authorized account 
   if (!req.session.userId) {
     return res.status(401).json({ error: 'Unauthorized' });
   }

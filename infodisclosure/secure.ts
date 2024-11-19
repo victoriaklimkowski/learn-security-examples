@@ -31,6 +31,8 @@ app.get('/userinfo', async (req: Request, res: Response) => {
   const { username } = req.query;
 
   // Input validation: Ensure username is a string
+  // -- Checking for code
+  // -- should also obscure the error message really
   if (typeof username !== 'string') {
     return res.status(400).send('Invalid username format');
   }
@@ -38,6 +40,8 @@ app.get('/userinfo', async (req: Request, res: Response) => {
   // Perform database query using sanitized username
   try {
     // Sanitize username input: Prevent NoSQL injection
+    // Regex to replace all non-alphanumeric characters to an empty string
+    // In a real project this would be taken care of by middleware
     const sanitizedUsername = username.replace(/[^\w\s]/gi, ''); // Remove non-alphanumeric characters
     const user = await User.findOne({ username: sanitizedUsername }).exec();
 

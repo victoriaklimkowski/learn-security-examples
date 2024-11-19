@@ -26,10 +26,19 @@ const User: Model<IUser> = mongoose.model<IUser>('User', userSchema);
 
 // Route to authenticate user (VULNERABLE TO NOSQL INJECTION)
 app.get('/userinfo', async (req: Request, res: Response) => {
+  // 
   const { id } = req.query;
 
   const uid = id as string;
 
+
+  // -- Could produce an uncaught error
+  // query could be not an id but could call all
+  // mongo requires an id format so if you send an invalid id
+  // it will crash by returning an error that's uncaught
+  // so will then crash the server
+  // and the hacker can keep doing this, causing a DOS error
+  // causes BSONError, requiring the id input to be a 24 character string
   const user = await User.findOne({ _id: uid }).exec();
 
   if (user) {

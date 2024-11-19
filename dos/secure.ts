@@ -26,6 +26,8 @@ const userSchema: Schema<IUser> = new mongoose.Schema({
 const User: Model<IUser> = mongoose.model<IUser>('User', userSchema);
 
 // Configure rate limiter
+// -- added rate limiter - which also helps (middleware)
+// ideally/typically defined in a seperate file, put here for simplicity of demo
 const limiter = rateLimit({
   windowMs: 5 * 1000, // 5 seconds
   max: 1, // Limit each IP to 1 request per `windowMs`
@@ -33,9 +35,12 @@ const limiter = rateLimit({
 });
 
 // Route to authenticate user (VULNERABLE TO NOSQL INJECTION)
+// app.use would apply it to all
 app.get('/userinfo', limiter, async (req: Request, res: Response) => {
+  // -- also good practice to sanitize here as well. 
   const { id } = req.query;
 
+  // -- fixed the vulnerability by adding a try/catch block
   try {
     // Perform database query using sanitized ID
     const user = await User.findOne({ _id: id }).exec();
@@ -45,6 +50,8 @@ app.get('/userinfo', limiter, async (req: Request, res: Response) => {
     } else {
       res.status(401).send('User not found');
     }
+    // -- by catching the error as well we are not hinting to the hacker 
+    // that an error happened or what the error was. 
   } catch (error) {
     console.error('Error querying database:', error);
     res.status(500).send('Internal server error');

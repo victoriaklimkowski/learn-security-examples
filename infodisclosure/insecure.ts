@@ -27,8 +27,10 @@ const User: Model<IUser> = mongoose.model<IUser>('User', userSchema);
 // Route to authenticate user (VULNERABLE TO NOSQL INJECTION)
 app.get('/userinfo', async (req: Request, res: Response) => {
   // req.query comes from the user
+  // -- need to restrict username to not be code
   const { username } = req.query;
   // Also a threat, could associate with other logs to get more info
+  // -- logging the username to the console which is a leaking vulnerability
   console.log(username); 
   // Vulnerable code: Directly using user-provided values in the query
   // without sanitization so also tampering vulnerability
@@ -36,9 +38,13 @@ app.get('/userinfo', async (req: Request, res: Response) => {
   // findOne is slightly more secure than find because they can only return one result
   // but still problematic for the other reasons
   // So this is a information disclosure vulnarability carried out by tampering
+  //
+  // -- The username comes from an HTTP request, which could be attacker controlled
+  // So needs to be sanitized again
   const user = await User.findOne({ username: username as string }).exec();
 
   if (user) {
+    // -- Sending unencrypted user data
     res.send(`User: ${user}`);
   } else {
     res.status(401).send('Invalid username or password');

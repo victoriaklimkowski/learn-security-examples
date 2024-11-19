@@ -24,10 +24,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // Middleware for logging requests
+// --dif: uses logging within the middleware
+// app.use so gets triggered on every request
+// stores important info
+//
 app.use((req: Request, res: Response, next: NextFunction) => {
     const logEntry = `[${getCurrentDateTime()}] ${req.method} ${req.url} - ${req.ip}`;
     logStream.write(logEntry + '\n');
-    next();
+    next(); // example of chain of responsibility design pattern
 });
 
 // Route to send a message (requires authentication)
@@ -40,6 +44,7 @@ app.post('/send-message', (req: Request, res: Response) => {
 
     messages.push({ message, user });
 
+    // -- logging using the middleware
     const logEntry = `[${getCurrentDateTime()}] Message sent by ${user}: ${message}`;
     logStream.write(logEntry + '\n');
 
@@ -71,6 +76,7 @@ app.get('/send-message-form', (req: Request, res: Response) => {
 });
 
 // Error handling middleware
+// -- Also good for security because errors can also be a form of hacking
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     console.error(err.stack);
     const logEntry = `[${getCurrentDateTime()}] Error: ${err.message}`;

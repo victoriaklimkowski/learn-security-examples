@@ -24,6 +24,8 @@ app.post('/send-message', (req: Request, res: Response) => {
     console.log(req.body);
     const { message, user } = req.body;
 
+    // -- does not validate user identity, just if it is there. 
+    // should instead read from sessions or some such. 
     if (!message || !user) {
         return res.status(400).json({ error: 'Message and user are required fields.' });
     }

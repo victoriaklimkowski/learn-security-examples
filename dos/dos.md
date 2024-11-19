@@ -31,5 +31,13 @@ This will create a database in MongoDB called __infodisclosure__. Verify its pre
 Answer the following:
 
 1. Briefly explain the potential vulnerabilities in **insecure.ts** that can lead to a DoS attack.
+
+The vulnerabilty in insecure.ts primarily comes from not catching any errors that could be produced by the findOne database call, and supported by not sanitizing the id input. 
+
 2. Briefly explain how a malicious attacker can exploit them.
+
+If an invalid id input is passed in, the database call could produce an uncaught error, which would crash the server because it is not being caught. A hacker could do this repetedly, which would result in a DOS attack, keeping the server down. Specifically this produced a BSONError, triggering the requirement that the id input is a 24 character string. 
+
 3. Briefly explain the defensive techniques used in **secure.ts** to prevent the DoS vulnerability?
+
+Secure.ts makes several improvements to this code.  It fixes the above discribed vulnerability by adding a try/catch block so that if the database does produce an error (for whatever reason), it will be caught and not resultingly crashing the server. It also catches the error which provides additional protection by not hinting at the error to the hacker. It also adds a middleware rate limiter which restricts any hacker from sending requests to frequently (no more than one every 5 seconds), and could also be increased. The code  could be further improved by adding another layer of security by sanitizing the id input as well. 
